@@ -2,7 +2,9 @@ const catchAsync = require('../../utilities/catchAsync')
 const Review = require('../../models/review')
 const Campground = require('../../models/campground')
 const ExpressErr = require('../../utilities/ExpressErr')
-const { reviewSchema } = require('../../scheams.js');
+const {
+    reviewSchema
+} = require('../../scheams.js');
 
 const validateReview = (req, res, next) => {
     const {
@@ -25,7 +27,7 @@ exports.addReview = (validateReview, catchAsync(async (req, res) => {
     await review.save();
     await campground.save();
     req.flash('success', 'Created new review!');
-    res.redirect(`/campgrounds/${campground._id}`)
+    res.redirect(`/campgrounds/${campground._id}`);
 }))
 
 //DELETE REVIEW

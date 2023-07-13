@@ -4,6 +4,9 @@ const ExpressErr = require('../../utilities/ExpressErr')
 const {
     campgroundSchema
 } = require('../../scheams.js');
+const {
+    cloudinary
+} = require('../../cloudinary')
 
 //VALIDATION FOR FORMS
 const validateCampground = (req, res, next) => {
@@ -36,6 +39,10 @@ exports.newCampground = (catchAsync((req, res) => {
 //ADD NEW CAMPGROUND POST REQUEST
 exports.makeNewCampground = (validateCampground, catchAsync(async (req, res, next) => {
     const campground = new Campground(req.body.campground);
+    campground.images = req.files.map(f => ({
+        url: f.path,
+        filename: f.filename
+    }));
     campground.author = req.user._id;
     await campground.save();
     req.flash('success', "Successfully created a new campground")
@@ -77,6 +84,26 @@ exports.editOneCampground = (validateCampground, catchAsync(async (req, res) => 
     const campground = Campground.findByIdAndUpdate(id, {
         ...req.body.campground
     });
+    // const imgs = req.files.map(f => ({
+    //     url: f.path,
+    //     filename: f.filename
+    // }));
+    //campground.images.push(...imgs);
+    await campground.save();
+    // if (req.body.deleteImages) {
+    //     for (let filename of req.body.deleteImages) {
+    //         await cloudinary.uploader.destroy(filename);
+    //     }
+    //     await campground.updateOne({
+    //         $pull: {
+    //             images: {
+    //                 filename: {
+    //                     $in: req.body.deleteImages
+    //                 }
+    //             }
+    //         }
+    //     })
+    // }
     req.flash('success', 'Successfully updated campground!');
     res.redirect(`/campgrounds/${campground._id}`)
 }))

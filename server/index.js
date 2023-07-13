@@ -1,3 +1,6 @@
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 const express = require('express')
 const server = express();
 const path = require('path')
@@ -7,15 +10,17 @@ const ejsMate = require('ejs-mate')
 const ExpressErr = require('./utilities/ExpressErr')
 const campgroundRouter = require('./routes/Campground')
 const reviewRouter = require('./routes/Review')
-const session=require('express-session')
-const flash=require('connect-flash')
-const passport=require('passport')
-const localStrategy=require('passport-local')
-const User=require('./models/User')
-const userRouter=require('./routes/auth/User')
+const session = require('express-session')
+const flash = require('connect-flash')
+const passport = require('passport')
+const localStrategy = require('passport-local')
+const User = require('./models/User')
+const userRouter = require('./routes/auth/User')
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 //MONGODB CONNECTION
-mongoose.connect('mongodb://localhost:27017/yelp-camp')
+mongoose.connect(process.env.MONGO_URL)
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once("open", () => {
@@ -55,13 +60,16 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 server.use((req, res, next) => {
-    res.locals.currentUser=req.user;
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     next();
 })
 
 
+server.get('/', (req, res) => {
+    res.render('home')
+});
 
 //CAMPGROUNDS ROUTE
 server.use('/campgrounds', campgroundRouter)
@@ -70,7 +78,7 @@ server.use('/campgrounds', campgroundRouter)
 server.use('/campgrounds/:id/reviews', reviewRouter)
 
 //USER ROUTE
-server.use('/',userRouter);
+server.use('/', userRouter);
 
 //IF ANY PAGE IN NOT VALID OR FOUND
 server.all('*', (req, res, next) => {
