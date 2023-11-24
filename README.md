@@ -1,10 +1,10 @@
-# CampSearch
+# CampScout
 
 A website that shows Campground based on different locations.
 
 
 # Usage
-- First, clone the repositroy ``` git clone https://github.com/shivam-0510/CampSearch.git```
+- First, clone the repository ``` git clone https://github.com/shivam-0510/CampScout.git```
 -  Run ```npm install ``` to install all dependencies.
 - Create free account on [Cloudinary](https://cloudinary.com/) for uploading images on cloud.
 - Create a ```.env``` file in the root directory and copy the variables from ```.env.sample```.
